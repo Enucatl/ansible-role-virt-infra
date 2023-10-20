@@ -133,10 +133,12 @@ virt_infra_host_deps:
   - virt-customize
   - virt-sysprep
 
-# Comma separated list of packages to install into guest disks
-virt_infra_guest_deps:
-  - cloud-init
-  - qemu-guest-agent
+# Run virt-customize with the following arguments
+virt_infra_virt_customize_flags:
+  - flag: "install"
+    args: "cloud-init"
+  - flag: "install"
+    args: "qemu-guest-agent"
 
 # Automatically add entries to /etc/hosts on the kvmhost
 virt_infra_add_etc_hosts: true

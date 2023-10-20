@@ -72,7 +72,7 @@
 - name: Get timezone from KVM host for cloud-init
   shell: |
     set -o pipefail
-    timedatectl |grep 'Time zone:' |awk '{ print $3 }'
+    timedatectl | grep 'Time zone:' | awk '{ print $3 }'
   register: result_timezone
   changed_when: false
   ignore_errors: true

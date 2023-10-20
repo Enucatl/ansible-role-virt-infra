@@ -177,71 +177,26 @@
   become: true
   delegate_to: "{{ kvmhost }}"
 
-- name: Run custom shell commands in guest disk
+- name: Run virt-customize
   command: >
     virt-customize
-    -a {{ hostvars[kvmhost].virt_infra_host_image_path | default(virt_infra_host_image_path) }}/{{ inventory_hostname }}-boot.qcow2
-    {% if virt_infra_disk_cmd is defined and virt_infra_disk_cmd %}
-    {% for cmd in virt_infra_disk_cmd %}
-    --run-command '{{ cmd }}'
+    --add {{ hostvars[kvmhost].virt_infra_host_image_path | default(virt_infra_host_image_path) }}/{{ inventory_hostname }}-boot.qcow2
+    {% if virt_infra_virt_customize_flags is defined and virt_infra_virt_customize_flags %}
+    {% for item in virt_customize_flags %}
+    --{{item['flag']}} '{{ item["args"] }}'
     {% endfor %}
     {% endif %}
-  register: result_disk_cmd
+  register: result_disk_virt_customize
   retries: 10
   delay: 2
-  until: result_disk_cmd is succeeded
+  until: result_disk_virt_customize is succeeded
   become: true
   when:
     - inventory_hostname not in groups['kvmhost']
     - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
     - virt_infra_state != "undefined"
-    - virt_infra_disk_cmd is defined and virt_infra_disk_cmd
+    - virt_infra_virt_customize_flags is defined and virt_infra_virt_customize_flags
     - not result_stat_boot.stat.exists or (result_stat_boot.stat.exists and (keep_boot is not defined or keep_boot is defined and not keep_boot))
-  delegate_to: "{{ kvmhost }}"
-
-- name: Install required packages into guest disk
-  command: >
-    virt-customize
-    -a {{ hostvars[kvmhost].virt_infra_host_image_path | default(virt_infra_host_image_path) }}/{{ inventory_hostname }}-boot.qcow2
-    {% if virt_infra_sm_creds is defined and virt_infra_sm_creds %}
-    --sm-register
-    --sm-credentials {{ virt_infra_sm_creds }}
-    --sm-attach {{ virt_infra_sm_attach | default("auto") }}
-    {% endif %}
-    --install {{ virt_infra_guest_deps | join(',') }}
-  register: result_disk_deps
-  retries: 10
-  delay: 2
-  until: result_disk_deps is succeeded
-  become: true
-  when:
-    - inventory_hostname not in groups['kvmhost']
-    - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
-    - virt_infra_state != "undefined"
-    - virt_infra_guest_deps is defined and virt_infra_guest_deps
-    - not result_stat_boot.stat.exists or (result_stat_boot.stat.exists and (keep_boot is not defined or keep_boot is defined and not keep_boot))
-    - not ((virt_infra_variant is defined and 'rhel' in virt_infra_variant) and (virt_infra_sm_creds is undefined or virt_infra_sm_creds is defined and not virt_infra_sm_creds))
-  delegate_to: "{{ kvmhost }}"
-
-- name: Remove RHEL registration
-  command: >
-    virt-customize
-    -a {{ hostvars[kvmhost].virt_infra_host_image_path | default(virt_infra_host_image_path) }}/{{ inventory_hostname }}-boot.qcow2
-    {% if virt_infra_sm_creds is defined and virt_infra_sm_creds %}
-    --sm-remove
-    --sm-unregister
-    --sm-credentials {{ virt_infra_sm_creds }}
-    {% endif %}
-  register: result_disk_unregister
-  retries: 10
-  delay: 2
-  until: result_disk_unregister is succeeded
-  become: true
-  when:
-    - inventory_hostname not in groups['kvmhost']
-    - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
-    - virt_infra_sm_creds is defined and virt_infra_sm_creds
-    - virt_infra_state != "undefined"
   delegate_to: "{{ kvmhost }}"
 
 - name: Sysprep guest disk
