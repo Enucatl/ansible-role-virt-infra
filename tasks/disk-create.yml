@@ -182,7 +182,7 @@
     virt-customize
     --add {{ hostvars[kvmhost].virt_infra_host_image_path | default(virt_infra_host_image_path) }}/{{ inventory_hostname }}-boot.qcow2
     {% if virt_infra_virt_customize_flags is defined and virt_infra_virt_customize_flags %}
-    {% for item in virt_customize_flags %}
+    {% for item in virt_infra_virt_customize_flags %}
     --{{item['flag']}} '{{ item["args"] }}'
     {% endfor %}
     {% endif %}
