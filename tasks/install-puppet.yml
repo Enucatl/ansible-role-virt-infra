@@ -5,6 +5,7 @@
   when:
     - inventory_hostname not in groups['kvmhost']
     - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
+    - virt_infra_state != "undefined"
   block:
 
     - name: Check if the file exists
@@ -19,6 +20,7 @@
       when: 
         - inventory_hostname not in groups['kvmhost']
         - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
+        - virt_infra_state != "undefined"
         - not result_stat_puppet_package.stat.exists
 
     - name: Get token from the hashicorp vault
