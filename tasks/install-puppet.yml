@@ -25,7 +25,7 @@
 
     - name: Get token from the hashicorp vault
       shell:
-        vault token create -address="{{ virt_infra_vault_addr }}" -policy=puppet -explicit-max-ttl=5m -use-limit=1 -format=json | jq --raw-output .auth.client_token
+        vault token create -address="{{ virt_infra_vault_addr }}" -policy=puppet -explicit-max-ttl=15m -use-limit=1 -format=json | jq --raw-output .auth.client_token
       args:
         executable: /bin/bash
       register: vault_token_output
@@ -33,7 +33,7 @@
     - name: Create a temporary file from the template (overwrite if exists)
       template:
         src: templates/csr_attributes.yaml.j2
-        dest: "/tmp/csr_attributes_{{ inventory_hostname }}.yaml"
+        dest: "/tmp/ansible/{{ inventory_hostname }}/csr_attributes.yaml"
         force: yes  # Overwrite the file if it exists
       register: temp_file
 
