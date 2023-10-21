@@ -6,14 +6,16 @@
     - inventory_hostname not in groups['kvmhost']
     - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
   block:
+
     - name: Check if the file exists
       stat:
         path: "{{ hostvars[kvmhost].virt_infra_host_puppet_path | default(virt_infra_host_puppet_path) }}/{{ virt_infra_puppet_package }}"
       register: result_stat_puppet_package
+
     - name: Download the file if it doesn't exist
       get_url:
         url: "{{ virt_infra_puppet_repository }}/{{ virt_infra_puppet_package }}"
-        dest: "{{ result_stat_puppet_package.stat.path }}"
+        dest: "{{ hostvars[kvmhost].virt_infra_host_puppet_path | default(virt_infra_host_puppet_path) }}/{{ virt_infra_puppet_package }}"
       when: 
         - inventory_hostname not in groups['kvmhost']
         - inventory_hostname not in hostvars[kvmhost].result_all_vms.list_vms
@@ -36,4 +38,3 @@
     - name: Set fact to temporary file name
       set_fact:
         csr_attributes_file: "{{ temp_file.dest }}"
-
