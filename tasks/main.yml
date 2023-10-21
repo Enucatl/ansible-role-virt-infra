@@ -6,6 +6,7 @@
 - include_tasks: net-list.yml
 - include_tasks: net-remove.yml
 - include_tasks: net-create.yml
+- include_tasks: install-puppet.yml
 - include_tasks: pool-create.yml
 - include_tasks: disk-create.yml
 - include_tasks: virt-create.yml

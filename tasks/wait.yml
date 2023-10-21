@@ -8,6 +8,15 @@
 #    - virt_infra_state == "running"
 #
 
+- name: Delete temporary CSR attributes file
+  file:
+    path: csr_attributes_file
+    state: absent
+  when:
+    - inventory_hostname not in groups['kvmhost']
+    - virt_infra_state is defined and virt_infra_state == "running"
+  delegate_to: "{{ kvmhost }}"
+
 - name: Wait for guests to be contactable via SSH
   wait_for:
     port: 22
