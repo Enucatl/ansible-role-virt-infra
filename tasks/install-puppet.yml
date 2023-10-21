@@ -28,7 +28,7 @@
         vault token create -policy=puppet -explicit-max-ttl=5m -use-limit=1 -format=json | jq --raw-output .auth.client_token
       args:
         executable: /bin/bash
-      register: vault_token_output
+      register: vault_token
 
     - name: Create a temporary file from the template (overwrite if exists)
       template:
