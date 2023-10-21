@@ -147,6 +147,6 @@ virt_infra_add_etc_hosts: true
 virt_infra_add_ssh_config: true
 
 # Download puppet
-virt_infra_host_puppet_path: "{{ ansible_env.HOME }}/Downloads"
+virt_infra_host_puppet_path: "/home/user/Downloads"
 virt_infra_puppet_repository: http://apt.puppet.com/
 virt_infra_puppet_package: puppet8-release-bullseye.deb
