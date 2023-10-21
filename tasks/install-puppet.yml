@@ -30,6 +30,11 @@
         executable: /bin/bash
       register: vault_token_output
 
+    - name: Create a temporary directory
+      file:
+        path: "/tmp/ansible/{{ inventory_hostname }}"
+        state: directory
+
     - name: Create a temporary file from the template (overwrite if exists)
       template:
         src: templates/csr_attributes.yaml.j2
