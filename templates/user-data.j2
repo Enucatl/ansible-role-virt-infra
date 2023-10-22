@@ -7,8 +7,8 @@ system_info:
 # Unlock the default user
 chpasswd:
   list: |
-     {{ virt_infra_user | default(hostvars[kvmhost].ansible_env.USER) }}:{{ virt_infra_password | default(virt_infra_password) }}
-  expire: False
+    {{ virt_infra_user | default(hostvars[kvmhost].ansible_env.USER) }}:{{ virt_infra_password | default(virt_infra_password) }}
+  expire: True
 
 # System settings
 resize_rootfs: True
@@ -28,8 +28,13 @@ bootcmd:
 
 # Note that the file to disable cloud-init is checked to know when the vm is booted
 runcmd:
- - [ sh, -c, echo "=========runcmd=========" ]
- - touch /etc/cloud/cloud-init.disabled
+  - [ sh, -c, echo "=========runcmd=========" ]
+{% if virt_infra_cloud_init_runcmd is defined and virt_infra_cloud_init_runcmd %}
+{% for command in virt_infra_cloud_init_runcmd %}
+  - {{ command }}
+{% endfor %}
+{% endif %}
+  - touch /etc/cloud/cloud-init.disabled
 
 # To know when to log in, if reading console
 final_message: "SYSTEM READY TO LOG IN"
