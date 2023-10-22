@@ -8,7 +8,7 @@ system_info:
 chpasswd:
   list:
     - {{ virt_infra_user | default(hostvars[kvmhost].ansible_env.USER) }}:{{ virt_infra_password | default(virt_infra_password) }}
-  expire: True
+  expire: false
 
 # System settings
 resize_rootfs: True
