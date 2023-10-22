@@ -6,13 +6,13 @@ system_info:
 
 # Unlock the default user
 chpasswd:
-  list: |
-    {{ virt_infra_user | default(hostvars[kvmhost].ansible_env.USER) }}:{{ virt_infra_password | default(virt_infra_password) }}
+  list:
+    - {{ virt_infra_user | default(hostvars[kvmhost].ansible_env.USER) }}:{{ virt_infra_password | default(virt_infra_password) }}
   expire: True
 
 # System settings
 resize_rootfs: True
-ssh_pwauth: "{{ virt_infra_ssh_pwauth | default(True) }}"
+ssh_pwauth: "{{ virt_infra_ssh_pwauth | default(true) | bool }}"
 ssh_authorized_keys:
 {% for key in virt_infra_ssh_keys | default(hostvars[kvmhost].virt_infra_ssh_keys, true) %}
   - {{ key }}
