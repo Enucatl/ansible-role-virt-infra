@@ -63,8 +63,8 @@
 - name: Wait for cloud-init to finish
   shell: ssh {{ inventory_hostname }} stat /etc/cloud/cloud-init.disabled
   register: result_wait_cloudinit
-  retries: 60
-  delay: 2
+  retries: 20
+  delay: 10
   until: result_wait_cloudinit is succeeded
   delegate_to: "{{ kvmhost }}"
   when:
